@@ -1,0 +1,15 @@
+Column  Description
+1       model set   
+2       Metallicity, Z
+3       Initial mass (M/M_sun)
+4       1st crossing: log of crossing time, t_cross (t_cross in years) 
+5       1st crossing: log age at entry of the IS
+6       1st crossing: period change rate, Pdot/P (in yrs^{-1})
+7       2nd crossing: log of crossing time, t_cross (t_cross in years) 
+8       2nd crossing: log age at entry of the IS
+9       2nd crossing: period change rate, Pdot/P (in yrs^{-1})
+10      3rd crossing: log of crossing time, t_cross (t_cross in years) 
+11      3rd crossing: log age at entry of the IS
+12      3rd crossing: period change rate, Pdot/P (in yrs^{-1})
+
+For the 2nd and 3rd crossing, asterisk at crossing time indicates the tip of the loop falls inside the IS (and the crossing time is computed based on the model’s age at the tip of the loop and respective edge of the IS

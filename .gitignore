@@ -1,0 +1,52 @@
+# --- Cepheid MESA Grid Viewer · .gitignore --------------------------------
+
+# Heavy data — full-resolution parquets are not committed (regenerate
+# from the Zenodo archive on a fresh clone via `python preprocess.py`).
+# Stride-5 parquets are committed in this repo so Streamlit Cloud has
+# something to render. To exclude data/ entirely (back to local-only
+# data), uncomment the `data/` line below.
+# data/
+models/*.tgz
+
+# But DO commit the small companion text files that ship with the
+# Zenodo archive (instability-strip tables, the reference inlist) —
+# these are needed for the IS overlay, the P–L tab, and the Help tab.
+!models/Tab*.dat
+!models/Tab*.txt
+!models/inlist_project_*
+!models/README.txt
+
+# Older / packaged versions of the viewer — local references, not
+# part of the published tool.
+OLD_REF/
+Cepheid_tracks_viewer/
+
+# Python & venv
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit cache (re-generated at runtime)
+.streamlit/secrets.toml
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build / packaging
+*.egg-info/
+dist/
+build/
+
+# A bare-root config.toml from an earlier setup — superseded by
+# .streamlit/config.toml. Safe to drop.
+config.toml

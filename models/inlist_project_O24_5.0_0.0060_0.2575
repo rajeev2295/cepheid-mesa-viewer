@@ -1,0 +1,149 @@
+&star_job
+
+    create_pre_main_sequence_model = .false.
+
+    history_columns_file = 'history_columns_cep.list'
+    profile_columns_file = 'profile_columns_cep.list'
+
+    save_model_when_terminate = .true.
+    save_model_filename = 'final.mod'
+
+! abundances
+
+    initial_zfracs = 6 ! A09
+    
+! nuclear net  
+
+    change_net = .true.
+    new_net_name='pp_and_cno_extras.net'  
+        
+    set_rate_c12ag = 'Kunz'
+    set_rate_n14pg = 'jina reaclib'
+
+    show_net_species_info = .false.
+    show_net_reactions_info = .false.
+
+! chemical composition for ZAMS model
+
+    relax_y = .true.
+    new_y = 0.02575
+    relax_z = .true.
+    new_z = 0.0060
+/
+
+&kap
+
+    kap_file_prefix = 'a09'
+    kap_lowT_prefix = 'lowT_fa05_a09p'
+    kap_CO_prefix   = 'a09_co'
+
+    use_Zbase_for_Type1 = .true.
+    use_Type2_opacities = .true.
+    Zbase = 0.0060
+
+    cubic_interpolation_in_X = .true.
+    cubic_interpolation_in_Z = .true.
+/
+
+&controls
+
+    initial_mass = 5.0
+
+    MLT_option = 'Henyey'
+    mixing_length_alpha = 1.77
+
+! convective boundaries
+
+    use_Ledoux_criterion = .false.
+    
+    recalc_mix_info_after_evolve = .true.
+    
+    predictive_mix(1) = .true.
+    predictive_zone_type(1) = 'any'  
+    predictive_zone_loc(1) = 'core'   
+    predictive_bdy_loc(1) = 'any'     
+
+    predictive_superad_thresh(1) = 0.005d0
+    predictive_avoid_reversal(1) = 'he4'
+
+! semiconvection
+
+    alpha_semiconvection = 0
+
+! overshooting
+
+    overshoot_scheme(1) = 'exponential'
+    overshoot_zone_type(1) = 'burn_H'       
+    overshoot_zone_loc(1) = 'core'         
+    overshoot_bdy_loc(1) = 'any'         
+
+    overshoot_f(1)  = 0.02d0   
+    overshoot_f0(1) = 0.002d0
+
+    overshoot_scheme(2) = 'exponential'
+    overshoot_zone_type(2) = 'nonburn'
+    overshoot_zone_loc(2) = 'any'
+    overshoot_bdy_loc(2)  = 'bottom'
+
+    overshoot_f(2)  = 0.04d0
+    overshoot_f0(2) = 0.002d0
+
+! winds
+
+    cool_wind_RGB_scheme = 'Reimers'
+    Reimers_scaling_factor = 0.0
+    cool_wind_AGB_scheme = 'Blocker'
+    Blocker_scaling_factor = 0.0
+    RGB_to_AGB_wind_switch = 1d-4
+
+
+! atmosphere
+
+    atm_option = 'table'
+    atm_table = 'photosphere'
+    atm_off_table_option = 'T_tau'
+
+! diffusion
+
+    do_element_diffusion = .false.
+
+! EOS
+
+    energy_eqn_option = 'dedt'
+    
+! convergence parameters
+
+    mesh_delta_coeff = 0.5
+    time_delta_coeff = 0.5
+    max_years_for_timestep = 1d6
+
+    varcontrol_target = 1d-4
+    max_allowed_nz = 32000
+
+! limit on magnitude of relative change at surface
+
+    delta_HR_limit     = 0.005d0   
+    delta_lgTeff_limit = 0.005d0   
+    delta_lgL_limit    = 0.01      
+
+! limit on magnitude of relative change at center
+
+    delta_lgT_cntr_limit   = 0.005d0  
+    delta_lgRho_cntr_limit = 0.025d0   
+
+! when to stop
+
+    max_age = 15d9
+
+! output
+    star_history_name = 'history.data'
+    history_interval = 1
+    terminal_interval = 1000
+    write_header_frequency = 1000
+    profile_interval = 50
+    max_num_profile_models = 1000
+    photo_interval = -1
+    
+    warn_when_large_rel_run_E_err = 99d0
+    calculate_Brunt_N2 = .true.
+/

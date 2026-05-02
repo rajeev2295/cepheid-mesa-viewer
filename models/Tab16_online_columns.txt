@@ -1,0 +1,20 @@
+Column  Description
+1       IS identifier (b/r/m – blue/red/midline)
+2       Model set identifier, see Tab. 3
+3       crossing number (1st, 2nd, or 3rd)
+4       model mass (M/Msun)
+5       metal mass fraction, Z
+6       hydrogen mass fraction, X
+7       logarithm of age (age in yrs)
+8       logarithm of effective temperature
+9       logarithm of luminosity (log L/Lsun)
+10      logarithm of radius (log R/Rsun)
+11      central helium mass fraction, Yc
+12      F mode pulsation period, P0 (days; `x' if RSP model didn't converge)
+13      1O pulsation period, P1 (days; `x' if RSP model didn't converge)
+14      absolute magnitude in V band
+15      absolute magnitude in I band
+16      absolute magnitude in J band
+17      absolute magnitude in H band
+18      absolute magnitude in K band
+
