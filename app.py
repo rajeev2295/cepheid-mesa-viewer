@@ -1186,16 +1186,33 @@ def _load_sets_cached(set_names: tuple[str, ...]) -> pd.DataFrame:
         df["log_age"] = np.log10(df["star_age"].clip(lower=1.0)).astype("float32")
 
     # Per-track evolutionary-phase classification (used in hover and
-    # for the best-fit-track inference).
+    # for the best-fit-track inference). We iterate explicitly through
+    # the groups and write back to the parent DataFrame's `phase` column
+    # by index — this avoids `groupby.apply()` entirely. In pandas 2.2+
+    # the default of `include_groups=False` strips the grouping columns
+    # from the apply function's input *and* from the resulting concat,
+    # which broke a subsequent `df.groupby(['set','mass','Z','Y'])` call
+    # downstream (the columns weren't there anymore). Manual iteration
+    # is version-stable across pandas 1.x → 2.x.
     if all(c in df.columns for c in ["center_h1", "center_he4"]):
-        df = (df.groupby(["set", "mass", "Z", "Y"], sort=False, group_keys=False)
-                .apply(_classify_track_phases))
+        df["phase"] = "Main sequence"
+        for _key, sub in df.groupby(
+            ["set", "mass", "Z", "Y"], sort=False
+        ):
+            phases = _classify_track_phases_array(
+                sub["center_h1"].to_numpy(),
+                sub["center_he4"].to_numpy(),
+            )
+            df.loc[sub.index, "phase"] = phases
     return df
 
 
-def _classify_track_phases(g: pd.DataFrame) -> pd.DataFrame:
+def _classify_track_phases_array(
+    h1: np.ndarray, he4: np.ndarray
+) -> np.ndarray:
     """
-    Tag each row of a single track with a coarse evolutionary phase.
+    Vectorised phase classifier for a single track. Returns a NumPy array
+    of phase labels, same length as the inputs.
 
     Uses central abundances as the simplest robust proxies — no need for
     Lnuc breakdown columns or convective-zone diagnostics that may not be
@@ -1207,18 +1224,10 @@ def _classify_track_phases(g: pd.DataFrame) -> pd.DataFrame:
                   (Hertzsprung-gap / first IS crossing)
       * Blue loop (He-core)  : core helium burning (Yc < 0.99 * initial)
       * Post He : Yc exhausted (< 1e-3)
-
-    Phase boundaries are sequential model-number indices, so a blue-loop
-    point that bounces back into the IS still reads as "Blue loop" even
-    if it momentarily crosses the same Teff again.
     """
-    h1 = g["center_h1"].to_numpy()
-    he4 = g["center_he4"].to_numpy()
     n = len(h1)
     if n == 0:
-        g = g.copy()
-        g["phase"] = pd.Series([], dtype="string")
-        return g
+        return np.array([], dtype=object)
 
     init_h1 = float(h1[0]) if h1[0] > 0 else 0.7
     init_he4 = float(he4[0]) if he4[0] > 0 else 0.27
@@ -1248,10 +1257,7 @@ def _classify_track_phases(g: pd.DataFrame) -> pd.DataFrame:
         phases[he_start:he_end] = "Blue loop · He-core"
     if he_end < n:
         phases[he_end:] = "Post He-burning"
-
-    g = g.copy()
-    g["phase"] = phases
-    return g
+    return phases
 
 
 def load_sets_with_status(set_names: tuple[str, ...]) -> pd.DataFrame:
